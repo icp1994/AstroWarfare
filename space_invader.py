@@ -123,7 +123,7 @@ def menu(screen, font):
                                 return button_name  # return the level(an int)
 
 
-def main(level, screen, font):
+def run(level, screen, font):
     pygame.mouse.set_visible(False)
     # starts game with a particular level
     block_list = pygame.sprite.Group()
@@ -264,7 +264,7 @@ def main(level, screen, font):
         clock.tick(60)
 
 
-def run():
+def main():
     # manages the menu and the game
     pygame.init()
 
@@ -275,8 +275,8 @@ def run():
 
     while True:  # hack!
         level = menu(screen, font)
-        main(level, screen, font)
+        run(level, screen, font)
 
 
 if __name__ == '__main__':
-    run()
+    main()
