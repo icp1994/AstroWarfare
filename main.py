@@ -295,7 +295,7 @@ class GamePlay(GameState):
         self.level = data["level"]
         self.speed = 1 + self.level
         self.lives = 7 - self.level
-        self.ammo = 55 - 5 * self.level
+        self.ammo = 50 - 5 * self.level
         self.score = 0
 
     def get_event(self, event):
