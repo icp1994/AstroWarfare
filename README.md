@@ -1,6 +1,6 @@
 # AstroWarfare
 
-Astro Warfare is a basic pygame project which implements the basic space-shooter game.
+AstroWarfare is a basic pygame project which implements the classic space-shooter game.
 
 ### Requirements
 
