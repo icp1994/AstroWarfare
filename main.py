@@ -1,11 +1,3 @@
-# -*- file-encoding: utf-8 -*-
-"""
-Created on March 22, 2016 at 21:45
-
-@author: carl
-"""
-
-import sys
 import pygame as pg
 from random import randrange
 
@@ -19,8 +11,16 @@ class Block(pg.sprite.Sprite):
 
 
 class Button(pg.font.Font):
-    def __init__(self, text, state, font=None, font_size=30,
-                 font_color=pg.Color("white"), xcoord=0, ycoord=0):
+    def __init__(
+        self,
+        text,
+        state,
+        font=None,
+        font_size=30,
+        font_color=pg.Color("white"),
+        xcoord=0,
+        ycoord=0,
+    ):
         super().__init__(font, font_size)
         self.text = text
         self.state = state
@@ -101,20 +101,22 @@ class GameState:
     def startup(self, data):
         self.data = data
 
-    def get_event(self, event):
-        pass
+    def get_event(self, delta):
+        _ = delta
 
     def update(self, delta):
-        pass
+        _ = delta
 
     def draw(self, surface):
-        pass
+        _ = surface
 
 
 class SplashScreen(GameState):
     def __init__(self):
         super().__init__()
-        self.title = self.font.render("Welcome to Astro Warfare", True, pg.Color("dodgerblue"))
+        self.title = self.font.render(
+            "Welcome to Astro Warfare", True, pg.Color("dodgerblue")
+        )
         self.title_rect = self.title.get_rect(center=self.screen_rect.center)
         self.next_state = "MENU"
         self.flag = True
@@ -137,17 +139,32 @@ class SplashScreen(GameState):
         surface.fill(pg.Color("navyblue"))
         surface.blit(self.title, self.title_rect)
         if self.flag:
-            confirm = pg.font.SysFont(None, 25).render("PRESS ANY KEY TO CONTINUE", True, pg.Color("dodgerblue"))
-            surface.blit(confirm, confirm.get_rect(centerx=self.screen_rect.centerx,
-                                                   centery=self.screen_rect.centery + 60))
+            confirm = pg.font.SysFont(None, 25).render(
+                "PRESS ANY KEY TO CONTINUE", True, pg.Color("dodgerblue")
+            )
+            surface.blit(
+                confirm,
+                confirm.get_rect(
+                    centerx=self.screen_rect.centerx,
+                    centery=self.screen_rect.centery + 60,
+                ),
+            )
 
 
 class GameMenu(GameState):
-    def __init__(self, items=None, bg_color=pg.Color("black"), font=None,
-                 font_size=60, font_color=pg.Color("green")):
+    def __init__(
+        self,
+        items=None,
+        bg_color=pg.Color("black"),
+        font=None,
+        font_size=60,
+        font_color=pg.Color("green"),
+    ):
         super().__init__()
-        self.title = self.font.render("Astro Warfare", True, pg.Color("orange"))
-        self.title_rect = self.title.get_rect(centerx=self.screen_rect.centerx, centery=40)
+        self.title = pg.font.SysFont(None, 50).render("Astro Warfare", True, pg.Color("orange"))
+        self.title_rect = self.title.get_rect(
+            centerx=self.screen_rect.centerx, centery=40
+        )
         self.bg_color = bg_color
         if items is not None:
             self.items = items
@@ -165,9 +182,13 @@ class GameMenu(GameState):
             button.info = info
             xcoord = self.screen_width // 2
             if total_items % 2 == 0:
-                ycoord = (self.screen_height // 2) - (total_items - 2 * index - 1) * (button.height // 2)
+                ycoord = (self.screen_height // 2) - (total_items - 2 * index - 1) * (
+                    button.height // 2
+                )
             else:
-                ycoord = (self.screen_height // 2) - ((total_items - 1) // 2 - index) * button.height
+                ycoord = (self.screen_height // 2) - (
+                    (total_items - 1) // 2 - index
+                ) * button.height
             button.set_position((xcoord, ycoord))
             self.buttons.append(button)
 
@@ -182,7 +203,7 @@ class GameMenu(GameState):
 
     def set_mouse_selection(self, pos, mouse_button=None, menu_button=None):
         if mouse_button == 1:
-            for index, button in enumerate(self.buttons):
+            for button in self.buttons:
                 if button.is_mouse_selection(pos):
                     self.next_state = button.state
                     self.data.update(button.info)
@@ -234,6 +255,7 @@ class GameMenu(GameState):
             self.set_mouse_selection(pos=event.pos, mouse_button=event.button)
 
     def update(self, delta):
+        _ = delta
         if pg.mouse.get_rel() != (0, 0):
             self.mouse_visibility = True
             self.current_button = None
@@ -251,10 +273,13 @@ class GameMenu(GameState):
 
 class GameHelp(GameMenu):
     def startup(self, data):
-        self.help_texts = ["Astro Warfare is a classic space-shooter. Don't let the enemies fly pass you.",
-                           "Use directioanal keys to move your ship and SPACEBAR to shoot.",
-                           "You are given certain amount of ammunition and enemy allowance based on the difficulty.",
-                           "Shoot down 25 enemies on each level to clear the level.", "Good Luck, Have Fun!"]
+        self.help_texts = [
+            "Astro Warfare is a classic space-shooter. Don't let the enemies fly pass you.",
+            "Use directioanal keys to move your ship and SPACEBAR to shoot.",
+            "You are given certain amount of ammunition and enemy allowance based on the difficulty.",
+            "Shoot down 25 enemies on each level to clear the level.",
+            "Good Luck, Have Fun!",
+        ]
         self.items = (("OK", "MENU", {}),)
         super().startup(data)
 
@@ -262,15 +287,24 @@ class GameHelp(GameMenu):
         super().draw(surface)
         for index, text in enumerate(self.help_texts):
             message = pg.font.Font(None, 30).render(text, True, pg.Color("greenyellow"))
-            surface.blit(message, message.get_rect(centerx=self.screen_rect.centerx,
-                                                   centery=100 + 25 * index))
+            surface.blit(
+                message,
+                message.get_rect(
+                    centerx=self.screen_rect.centerx, centery=100 + 25 * index
+                ),
+            )
 
 
 class GameDifficulty(GameMenu):
     def startup(self, data):
-        self.items = (("LEVEL 0", "PLAY", {"level": 0}), ("LEVEL 1", "PLAY", {"level": 1}),
-                      ("LEVEL 2", "PLAY", {"level": 2}), ("LEVEL 3", "PLAY", {"level": 3}),
-                      ("LEVEL 4", "PLAY", {"level": 4}), ("LEVEL 5", "PLAY", {"level": 5}))
+        self.items = (
+            ("LEVEL 0", "PLAY", {"level": 0}),
+            ("LEVEL 1", "PLAY", {"level": 1}),
+            ("LEVEL 2", "PLAY", {"level": 2}),
+            ("LEVEL 3", "PLAY", {"level": 3}),
+            ("LEVEL 4", "PLAY", {"level": 4}),
+            ("LEVEL 5", "PLAY", {"level": 5}),
+        )
         super().startup(data)
 
 
@@ -282,8 +316,11 @@ class GamePlay(GameState):
     def startup(self, data):
         self.data = data
         self.time = 1000
-        self.enemy_list, self.shooter_list, self.all_sprite_list = \
-            pg.sprite.Group(), pg.sprite.Group(), pg.sprite.Group()
+        self.enemy_list, self.shooter_list, self.all_sprite_list = (
+            pg.sprite.Group(),
+            pg.sprite.Group(),
+            pg.sprite.Group(),
+        )
 
         self.player = Block("player.png")
         self.player.rect.centerx = self.screen_width // 2
@@ -304,7 +341,9 @@ class GamePlay(GameState):
         elif event.type == pg.KEYDOWN:
             if event.key == pg.K_SPACE:
                 if self.score == 25 or self.ammo == 0 or self.lives == 0:
-                    self.data.update({"score": self.score, "ammo": self.ammo, "lives": self.lives})
+                    self.data.update(
+                        {"score": self.score, "ammo": self.ammo, "lives": self.lives}
+                    )
                     self.done = True
                 else:
                     self.ammo -= 1
@@ -330,8 +369,10 @@ class GamePlay(GameState):
         if self.time >= 1000:
             self.time = 0
             enemy = Block("enemy.png")
-            enemy.rect.centerx = randrange(enemy.rect.width // 2, self.screen_width - enemy.rect.width // 2)
-            enemy.rect.centery = - randrange(enemy.rect.height, 2 * enemy.rect.height)
+            enemy.rect.centerx = randrange(
+                enemy.rect.width // 2, self.screen_width - enemy.rect.width // 2
+            )
+            enemy.rect.centery = -randrange(enemy.rect.height, 2 * enemy.rect.height)
             self.enemy_list.add(enemy)
             self.all_sprite_list.add(enemy)
 
@@ -347,25 +388,43 @@ class GamePlay(GameState):
             if shooter.rect.y < 0:
                 shooter.kill()
 
-        enemy_hit_dict = pg.sprite.groupcollide(self.enemy_list, self.shooter_list, True, True, pg.sprite.collide_mask)
+        enemy_hit_dict = pg.sprite.groupcollide(
+            self.enemy_list, self.shooter_list, True, True, pg.sprite.collide_mask
+        )
         for _ in enemy_hit_dict:
             self.score += 1
 
         if self.score == 25 or self.ammo == 0 or self.lives == 0:
-            self.data.update({"score": self.score, "ammo": self.ammo, "lives": self.lives})
+            self.data.update(
+                {"score": self.score, "ammo": self.ammo, "lives": self.lives}
+            )
             self.done = True
 
     def draw(self, surface):
         surface.set_clip(0, 0, self.screen_width, 40)
         surface.fill(pg.Color("black"))
-        text = pg.font.SysFont(None, 30).render('LEVEL: ' + str(self.level), True, pg.Color("blue"))
+        text = pg.font.SysFont(None, 30).render(
+            "LEVEL: " + str(self.level), True, pg.Color("blue")
+        )
         surface.blit(text, text.get_rect(centerx=self.screen_width // 5, centery=25))
-        text = pg.font.SysFont(None, 30).render('AMMO: ' + str(self.ammo), True, pg.Color("blue"))
-        surface.blit(text, text.get_rect(centerx=2 * self.screen_width // 5, centery=25))
-        text = pg.font.SysFont(None, 30).render('LIVES: ' + str(self.lives), True, pg.Color("blue"))
-        surface.blit(text, text.get_rect(centerx=3 * self.screen_width // 5, centery=25))
-        text = pg.font.SysFont(None, 30).render('SCORE: ' + str(self.score), True, pg.Color("blue"))
-        surface.blit(text, text.get_rect(centerx=4 * self.screen_width // 5, centery=25))
+        text = pg.font.SysFont(None, 30).render(
+            "AMMO: " + str(self.ammo), True, pg.Color("blue")
+        )
+        surface.blit(
+            text, text.get_rect(centerx=2 * self.screen_width // 5, centery=25)
+        )
+        text = pg.font.SysFont(None, 30).render(
+            "LIVES: " + str(self.lives), True, pg.Color("blue")
+        )
+        surface.blit(
+            text, text.get_rect(centerx=3 * self.screen_width // 5, centery=25)
+        )
+        text = pg.font.SysFont(None, 30).render(
+            "SCORE: " + str(self.score), True, pg.Color("blue")
+        )
+        surface.blit(
+            text, text.get_rect(centerx=4 * self.screen_width // 5, centery=25)
+        )
         pg.draw.aaline(surface, pg.Color("white"), (0, 35), (self.screen_width, 35), 5)
         surface.set_clip(0, 40, self.screen_width, self.screen_height - 40)
         surface.fill(pg.Color("black"))
@@ -381,19 +440,33 @@ class GameOver(GameMenu):
             message = "Congratulations! You have completed this level."
             color = pg.Color("green")
             if level < 5:
-                self.items = (("NEXT LEVEL", "PLAY", {"level": 1 + level}), ("PLAY AGAIN", "PLAY", {"level": level}),
-                              ("MAIN MENU", "MENU", {}), ("QUIT", "QUIT", {}))
+                self.items = (
+                    ("NEXT LEVEL", "PLAY", {"level": 1 + level}),
+                    ("PLAY AGAIN", "PLAY", {"level": level}),
+                    ("MAIN MENU", "MENU", {}),
+                    ("QUIT", "QUIT", {}),
+                )
             else:
-                self.items = (("PLAY AGAIN", "PLAY", {"level": level}), ("MAIN MENU", "MENU", {}), ("QUIT", "QUIT", {}))
+                self.items = (
+                    ("PLAY AGAIN", "PLAY", {"level": level}),
+                    ("MAIN MENU", "MENU", {}),
+                    ("QUIT", "QUIT", {}),
+                )
         else:
             color = pg.Color("red")
-            self.items = (("RETRY", "PLAY", {"level": level}), ("MAIN MENU", "MENU", {}), ("QUIT", "QUIT", {}))
+            self.items = (
+                ("RETRY", "PLAY", {"level": level}),
+                ("MAIN MENU", "MENU", {}),
+                ("QUIT", "QUIT", {}),
+            )
             if data["ammo"] == 0:
                 message = "Oops! You are out of ammo."
             else:
                 message = "Sorry! You have lost all available lives"
         self.title = pg.font.SysFont(None, 50).render(message, True, color)
-        self.title_rect = self.title.get_rect(centerx=self.screen_rect.centerx, centery=80)
+        self.title_rect = self.title.get_rect(
+            centerx=self.screen_rect.centerx, centery=80
+        )
         super().startup(data)
 
 
@@ -405,11 +478,24 @@ class GameExit(GameState):
 
 if __name__ == "__main__":
     pg.init()
-    game_screen = pg.display.set_mode((1366, 768), pg.FULLSCREEN | pg.HWSURFACE | pg.DOUBLEBUF)
-    menu = (("DIFFICULTY", "DIFFICULTY", {}), ("HELP", "HELP", {}), ("QUIT", "QUIT", {}))
-    game_states = {"SPLASH": SplashScreen(), "MENU": GameMenu(menu), "HELP": GameHelp(),
-                   "DIFFICULTY": GameDifficulty(), "PLAY": GamePlay(), "OVER": GameOver(), "QUIT": GameExit()}
+    screen_rect = pg.Rect(0, 0, 640, 480)
+    winstyle = 0
+    bestdepth = pg.display.mode_ok(screen_rect.size, winstyle, 32)
+    game_screen = pg.display.set_mode(screen_rect.size, winstyle, bestdepth)
+    menu = (
+        ("DIFFICULTY", "DIFFICULTY", {}),
+        ("HELP", "HELP", {}),
+        ("QUIT", "QUIT", {}),
+    )
+    game_states = {
+        "SPLASH": SplashScreen(),
+        "MENU": GameMenu(menu),
+        "HELP": GameHelp(),
+        "DIFFICULTY": GameDifficulty(),
+        "PLAY": GamePlay(),
+        "OVER": GameOver(),
+        "QUIT": GameExit(),
+    }
     game = Game(game_screen, game_states, "SPLASH")
     game.run()
     pg.quit()
-    sys.exit()
